@@ -42,21 +42,22 @@
     <string name="delivery_to">Dostawa: %1$s</string>
     <string name="summary_format">%1$s\nPizza: %2$s, %3$s\nDodatki: %4$s\nIlość: %5$d\n%6$s</string>
 
-
     <string name="no">Popraw</string>
-
     <string name="undo">Cofnij</string>
 
     <string name="btn_clear">WYCZYŚĆ FORMULARZ</string>
     <string name="clear_title">Wyczyścić formularz?</string>
     <string name="clear_message">Wszystkie wpisane dane zostaną usunięte.</string>
     <string name="clear_yes">Tak, wyczyść</string>
-
     <string name="cleared">Formularz wyczyszczony</string>
+
     <string name="header_summary">Sprawdź zamówienie</string>
     <string name="btn_confirm">POTWIERDŹ</string>
     <string name="btn_edit">POPRAW DANE</string>
     <string name="btn_share">Udostępnij</string>
+
     <string name="registered">Zamówienie złożone, numer %1$s</string>
     <string name="cancelled">Zamówienie niezłożone, popraw dane</string>
+    <string name="share_via">Udostępnij przez</string>
+    <string name="error_no_app">Brak aplikacji do obsługi tej czynności</string>
 </resources>

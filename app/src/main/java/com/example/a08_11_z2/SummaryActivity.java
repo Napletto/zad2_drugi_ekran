@@ -1,24 +1,26 @@
 package com.example.a08_11_z2;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Random
+import java.util.Random;
 
 public class SummaryActivity extends AppCompatActivity {
 
     // klucze definiuje ekran, który dane ODBIERA
-    public static final String EXTRA_NAME = "com.example.a01_11_z2.NAME";
-    public static final String EXTRA_PIZZA = "com.example.a01_11_z2.PIZZA";
-    public static final String EXTRA_SIZE = "com.example.a01_11_z2.SIZE";
-    public static final String EXTRA_TOPPINGS = "com.example.a01_11_z2.TOPPINGS";
-    public static final String EXTRA_QUANTITY = "com.example.a01_11_z2.QUANTITY";
-    public static final String EXTRA_DELIVERY = "com.example.a01_11_z2.DELIVERY";
-    public static final String EXTRA_ADDRESS = "com.example.a01_11_z2.ADDRESS";
-    public static final String EXTRA_NUMBER = "com.example.a01_11_z2.NUMBER";
+    public static final String EXTRA_NAME = "com.example.a08_11_z2.NAME";
+    public static final String EXTRA_PIZZA = "com.example.a08_11_z2.PIZZA";
+    public static final String EXTRA_SIZE = "com.example.a08_11_z2.SIZE";
+    public static final String EXTRA_TOPPINGS = "com.example.a08_11_z2.TOPPINGS";
+    public static final String EXTRA_QUANTITY = "com.example.a08_11_z2.QUANTITY";
+    public static final String EXTRA_DELIVERY = "com.example.a08_11_z2.DELIVERY";
+    public static final String EXTRA_ADDRESS = "com.example.a08_11_z2.ADDRESS";
+    public static final String EXTRA_NUMBER = "com.example.a08_11_z2.NUMBER";
 
     private TextView tvSummary;
 
@@ -32,15 +34,7 @@ public class SummaryActivity extends AppCompatActivity {
 
         findViewById(R.id.btnEdit).setOnClickListener(v -> finish());
         findViewById(R.id.btnConfirm).setOnClickListener(v -> confirm());
-    }
-
-    private void confirm() {
-        String number = "PZ/" + (1000 + new Random().nextInt(9000));
-
-        Intent result = new Intent();
-        result.putExtra(EXTRA_NUMBER, number);
-        setResult(RESULT_OK, result);
-        finish();                      // dopiero finish odsyła wynik
+        findViewById(R.id.btnShare).setOnClickListener(v -> share());
     }
 
     private String buildSummary() {
@@ -60,5 +54,26 @@ public class SummaryActivity extends AppCompatActivity {
 
         return getString(R.string.summary_format,
                 name, pizza, size, toppings, quantity, deliveryText);
+    }
+
+    private void confirm() {
+        String number = "PZ/" + (1000 + new Random().nextInt(9000));
+
+        Intent result = new Intent();
+        result.putExtra(EXTRA_NUMBER, number);
+        setResult(RESULT_OK, result);
+        finish();                      // dopiero finish odsyła wynik
+    }
+
+    private void share() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, tvSummary.getText().toString());
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.share_via)));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.error_no_app, Toast.LENGTH_SHORT).show();
+        }
     }
 }

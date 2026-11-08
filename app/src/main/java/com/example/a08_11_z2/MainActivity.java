@@ -1,6 +1,5 @@
 package com.example.a08_11_z2;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
+    // rejestracja wyniku jako pole klasy - musi powstać przed STARTED
     private final ActivityResultLauncher<Intent> summaryLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout llAddress;
     private Button btnOrder, btnClear;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -222,12 +222,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(SummaryActivity.EXTRA_QUANTITY, sbQuantity.getProgress());
         intent.putExtra(SummaryActivity.EXTRA_DELIVERY, swDelivery.isChecked());
         intent.putExtra(SummaryActivity.EXTRA_ADDRESS, etAddress.getText().toString().trim());
-        summaryLauncher.launch(intent);
+
+        summaryLauncher.launch(intent);        // zamiast startActivity
     }
 
-    private void showMessage(String text) {
-        Snackbar.make(findViewById(R.id.main), text, Snackbar.LENGTH_LONG).show();
-    }
     private String getToppings() {
         StringBuilder sb = new StringBuilder();
         if (cbCheese.isChecked()) {
@@ -244,5 +242,9 @@ public class MainActivity extends AppCompatActivity {
             return getString(R.string.none);
         }
         return sb.substring(0, sb.length() - 2);    // obcinamy ostatni ", "
+    }
+
+    private void showMessage(String text) {
+        Snackbar.make(findViewById(R.id.main), text, Snackbar.LENGTH_LONG).show();
     }
 }
