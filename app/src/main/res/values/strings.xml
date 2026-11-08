@@ -57,4 +57,6 @@
     <string name="btn_confirm">POTWIERDŹ</string>
     <string name="btn_edit">POPRAW DANE</string>
     <string name="btn_share">Udostępnij</string>
+    <string name="registered">Zamówienie złożone, numer %1$s</string>
+    <string name="cancelled">Zamówienie niezłożone, popraw dane</string>
 </resources>

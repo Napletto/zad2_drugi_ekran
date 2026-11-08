@@ -15,7 +15,8 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +24,19 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final ActivityResultLauncher<Intent> summaryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    String number = result.getData()
+                            .getStringExtra(SummaryActivity.EXTRA_NUMBER);
+                    clearForm();                                        // zamówienie poszło
+                    showMessage(getString(R.string.registered, number));
+                } else {
+                    showMessage(getString(R.string.cancelled));         // RESULT_CANCELED
+                }
+            });
 
     private EditText etName, etAddress;
     private Spinner spPizza;
@@ -208,9 +222,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(SummaryActivity.EXTRA_QUANTITY, sbQuantity.getProgress());
         intent.putExtra(SummaryActivity.EXTRA_DELIVERY, swDelivery.isChecked());
         intent.putExtra(SummaryActivity.EXTRA_ADDRESS, etAddress.getText().toString().trim());
-        startActivity(intent);
+        summaryLauncher.launch(intent);
     }
 
+    private void showMessage(String text) {
+        Snackbar.make(findViewById(R.id.main), text, Snackbar.LENGTH_LONG).show();
+    }
     private String getToppings() {
         StringBuilder sb = new StringBuilder();
         if (cbCheese.isChecked()) {

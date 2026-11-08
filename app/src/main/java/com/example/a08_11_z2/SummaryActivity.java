@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Random
+
 public class SummaryActivity extends AppCompatActivity {
 
     // klucze definiuje ekran, który dane ODBIERA
@@ -29,6 +31,16 @@ public class SummaryActivity extends AppCompatActivity {
         tvSummary.setText(buildSummary());
 
         findViewById(R.id.btnEdit).setOnClickListener(v -> finish());
+        findViewById(R.id.btnConfirm).setOnClickListener(v -> confirm());
+    }
+
+    private void confirm() {
+        String number = "PZ/" + (1000 + new Random().nextInt(9000));
+
+        Intent result = new Intent();
+        result.putExtra(EXTRA_NUMBER, number);
+        setResult(RESULT_OK, result);
+        finish();                      // dopiero finish odsyła wynik
     }
 
     private String buildSummary() {
