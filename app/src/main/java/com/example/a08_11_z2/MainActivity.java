@@ -1,5 +1,7 @@
 package com.example.a08_11_z2;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,14 +13,13 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.RadioButton;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.snackbar.Snackbar;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,11 +28,12 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup rgSize;
     private CheckBox cbCheese, cbMushrooms, cbOlives;
     private SeekBar sbQuantity;
-    private TextView tvQuantityValue, tvSummary;
+    private TextView tvQuantityValue;
     private MaterialSwitch swDelivery;
     private LinearLayout llAddress;
     private Button btnOrder, btnClear;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         cbOlives = findViewById(R.id.cbOlives);
         sbQuantity = findViewById(R.id.sbQuantity);
         tvQuantityValue = findViewById(R.id.tvQuantityValue);
-        tvSummary = findViewById(R.id.tvSummary);
         swDelivery = findViewById(R.id.swDelivery);
         llAddress = findViewById(R.id.llAddress);
         btnOrder = findViewById(R.id.btnOrder);
@@ -69,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         swDelivery.setOnCheckedChangeListener((buttonView, isChecked) ->
                 llAddress.setVisibility(isChecked ? View.VISIBLE : View.GONE));
 
-        // suwak - trzy metody, więc klasa anonimowa zamiast lambdy
         sbQuantity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -82,13 +82,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
+
         btnOrder.setOnClickListener(v -> {
             if (validateForm()) {
-                askForConfirmation();
+                openSummary();
             }
         });
         btnClear.setOnClickListener(v -> askForClear());
     }
+
     private void askForClear() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.clear_title)
@@ -97,9 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.no, null)
                 .show();
     }
+
     // "zdjęcie" stanu formularza, żeby dało się go odtworzyć
     private static class FormState {
-        String name, address, summary;
+        String name, address;
         int pizza, checkedId, quantity;
         boolean cheese, mushrooms, olives, delivery;
     }
@@ -108,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         FormState s = new FormState();
         s.name = etName.getText().toString();
         s.address = etAddress.getText().toString();
-        s.summary = tvSummary.getText().toString();
         s.pizza = spPizza.getSelectedItemPosition();
         s.checkedId = rgSize.getCheckedRadioButtonId();     // -1 = nic nie zaznaczono
         s.quantity = sbQuantity.getProgress();
@@ -122,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
     private void restoreState(FormState s) {
         etName.setText(s.name);
         etAddress.setText(s.address);
-        tvSummary.setText(s.summary);
         spPizza.setSelection(s.pizza);
         if (s.checkedId != -1) {
             rgSize.check(s.checkedId);
@@ -159,16 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
         sbQuantity.setProgress(0);
         swDelivery.setChecked(false);       // listener sam ukryje pole adresu
-
-        tvSummary.setText("");
-    }
-    private void askForConfirmation() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirm_title)
-                .setMessage(R.string.confirm_message)
-                .setPositiveButton(R.string.yes, (dialog, which) -> submitOrder())
-                .setNegativeButton(R.string.no, null)
-                .show();
     }
 
     private boolean validateForm() {
@@ -205,46 +196,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void submitOrder() {
-        tvSummary.setText(buildSummary());
-
-        Snackbar.make(findViewById(R.id.main), R.string.ordered, Snackbar.LENGTH_LONG)
-                .setAction(R.string.undo, v -> tvSummary.setText(""))
-                .show();
+    private void openSummary() {
+        Intent intent = new Intent(this, SummaryActivity.class);
+        startActivity(intent);
     }
-
-    private String buildSummary() {
-        RadioButton checkedSize = findViewById(rgSize.getCheckedRadioButtonId());
-
-        String delivery = swDelivery.isChecked()
-                ? getString(R.string.delivery_to, etAddress.getText().toString().trim())
-                : getString(R.string.pickup);
-
-        return getString(R.string.summary_format,
-                etName.getText().toString().trim(),
-                spPizza.getSelectedItem().toString(),
-                checkedSize.getText().toString(),
-                getToppings(),
-                sbQuantity.getProgress(),
-                delivery);
-    }
-
-    private String getToppings() {
-        StringBuilder sb = new StringBuilder();
-        if (cbCheese.isChecked()) {
-            sb.append(cbCheese.getText()).append(", ");
-        }
-        if (cbMushrooms.isChecked()) {
-            sb.append(cbMushrooms.getText()).append(", ");
-        }
-        if (cbOlives.isChecked()) {
-            sb.append(cbOlives.getText()).append(", ");
-        }
-
-        if (sb.length() == 0) {
-            return getString(R.string.none);
-        }
-        return sb.substring(0, sb.length() - 2);    // obcinamy ostatni ", "
-    }
-
 }

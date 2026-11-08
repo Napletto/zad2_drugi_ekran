@@ -53,4 +53,8 @@
     <string name="clear_yes">Tak, wyczyść</string>
 
     <string name="cleared">Formularz wyczyszczony</string>
+    <string name="header_summary">Sprawdź zamówienie</string>
+    <string name="btn_confirm">POTWIERDŹ</string>
+    <string name="btn_edit">POPRAW DANE</string>
+    <string name="btn_share">Udostępnij</string>
 </resources>
