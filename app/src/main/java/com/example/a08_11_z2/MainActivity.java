@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -197,7 +198,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openSummary() {
+        RadioButton checkedSize = findViewById(rgSize.getCheckedRadioButtonId());
+
         Intent intent = new Intent(this, SummaryActivity.class);
+        intent.putExtra(SummaryActivity.EXTRA_NAME, etName.getText().toString().trim());
+        intent.putExtra(SummaryActivity.EXTRA_PIZZA, spPizza.getSelectedItem().toString());
+        intent.putExtra(SummaryActivity.EXTRA_SIZE, checkedSize.getText().toString());
+        intent.putExtra(SummaryActivity.EXTRA_TOPPINGS, getToppings());
+        intent.putExtra(SummaryActivity.EXTRA_QUANTITY, sbQuantity.getProgress());
+        intent.putExtra(SummaryActivity.EXTRA_DELIVERY, swDelivery.isChecked());
+        intent.putExtra(SummaryActivity.EXTRA_ADDRESS, etAddress.getText().toString().trim());
         startActivity(intent);
+    }
+
+    private String getToppings() {
+        StringBuilder sb = new StringBuilder();
+        if (cbCheese.isChecked()) {
+            sb.append(cbCheese.getText()).append(", ");
+        }
+        if (cbMushrooms.isChecked()) {
+            sb.append(cbMushrooms.getText()).append(", ");
+        }
+        if (cbOlives.isChecked()) {
+            sb.append(cbOlives.getText()).append(", ");
+        }
+
+        if (sb.length() == 0) {
+            return getString(R.string.none);
+        }
+        return sb.substring(0, sb.length() - 2);    // obcinamy ostatni ", "
     }
 }
